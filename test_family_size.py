@@ -5,17 +5,20 @@ from src.features.is_alone import IsAloneAdder
 from src.features.title import TitleExtractor
 from src.features.embarked_filler import EmbarkedFiller
 from pyspark.sql.functions import col
-
+from src.features.pipeline import FeaturePipeline
 
 spark = get_spark_session("TestFeatures")
 
 df = load_titanic_data(spark, "data/raw/titanic.csv")
 
-df = FamilySizeAdder().transform(df)
-df = IsAloneAdder().transform(df)
-df =  TitleExtractor().transform(df)
-df = EmbarkedFiller().transform(df)
+pipeline = FeaturePipeline([FamilySizeAdder(), IsAloneAdder(), TitleExtractor(), EmbarkedFiller()])
+df = pipeline.run(df)
 
-# print(df.filter(col("Embarked").isNull()).count())
+# df = FamilySizeAdder().transform(df)
+# df = IsAloneAdder().transform(df)
+# df =  TitleExtractor().transform(df)
+# df = EmbarkedFiller().transform(df)
 
-# df.select("PassengerId", "SibSp", "Parch", "FamilySize", "IsAlone", "Name", "Title").show(10)
+print(df.filter(col("Embarked").isNull()).count())
+
+df.select("PassengerId", "SibSp", "Parch", "FamilySize", "IsAlone", "Name", "Title", "Embarked").show(10)
