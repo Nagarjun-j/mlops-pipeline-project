@@ -14,11 +14,14 @@ df = load_titanic_data(spark, "data/raw/titanic.csv")
 pipeline = FeaturePipeline([FamilySizeAdder(), IsAloneAdder(), TitleExtractor(), EmbarkedFiller()])
 df = pipeline.run(df)
 
-# df = FamilySizeAdder().transform(df)
-# df = IsAloneAdder().transform(df)
-# df =  TitleExtractor().transform(df)
-# df = EmbarkedFiller().transform(df)
+
 
 print(df.filter(col("Embarked").isNull()).count())
 
 df.select("PassengerId", "SibSp", "Parch", "FamilySize", "IsAlone", "Name", "Title", "Embarked").show(10)
+
+
+# df = FamilySizeAdder().transform(df)
+# df = IsAloneAdder().transform(df)
+# df =  TitleExtractor().transform(df)
+# df = EmbarkedFiller().transform(df)
